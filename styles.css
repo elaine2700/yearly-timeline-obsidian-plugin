@@ -6,9 +6,3 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
-.timelineContainer {
-  background-color: red;
-}
-.timeline {
-    border: 1px solid black;
-}

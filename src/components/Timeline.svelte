@@ -45,13 +45,42 @@
 
     interface NodePosition {
         column: number;
-        row: number;
+        rowStart: number;
+        rowEnd: number;
     }
-    const getNodeRowAndColumn = (startDate:Date, endDate:Date):NodePosition => {
-        // console.log(startDate);
-        // console.log(endDate);
-        return {column: 1, row: 1}
-    }
+    
+    const getNodeRowAndColumn = (startDate: Date, endDate: Date): NodePosition => {
+        const getDayOfYear = (date: Date): number => {
+            const monthIndex = date.getMonth(); // 0-based
+            const dayOfMonth = date.getDate();  // 1-based
+
+            let daysBeforeMonth = 0;
+            for (let i = 0; i < monthIndex; i++) {
+                const month = year.months[i];
+                if( month == undefined || month == null){
+                    break;
+                }
+                daysBeforeMonth += month.days;
+            }
+
+            return daysBeforeMonth + dayOfMonth;
+        };
+
+        const rowStart = getDayOfYear(startDate);
+        const rowEnd = getDayOfYear(endDate);
+
+        return {
+            column: 3,
+            rowStart,
+            rowEnd
+        };
+    };
+
+    let nodes = $derived(
+        notes.map(note =>
+            getNodeRowAndColumn(note.startDate, note.endDate)
+        )
+    );
 </script>
 
 <div class="days-group">
@@ -66,15 +95,22 @@
     <div class="day-item" style:grid-row={day+1}>{day + 1}</div>
     {/each}
 
-    {#each notes as note}
-    <div class="note-item">{note.name}</div>
+    {#each nodes as node}
+    <div class="note-item"
+        style:grid-column={node.column}
+        style:grid-row={`${node.rowStart} /  ${node.rowEnd + 1}`}>
+        {node.rowStart}, {node.rowEnd}, span: {node.rowEnd + 1 - node.rowStart}
+    </div>
     {/each}
+    
 </div>
 
 <style>
     .days-group{
         display: grid;
         row-gap: 0.25rem;
+        column-gap: 0.25rem;
+        grid-template-columns: 2rem 1fr 1fr;
     }
     .month-item{
         grid-column: 1;
@@ -84,6 +120,9 @@
         align-items: center;
         justify-content: center;
         color: black;
+        writing-mode: vertical-rl;
+        text-orientation: sideways;
+        transform: rotate(180deg);
     }
     .day-item{
         grid-column: 2;
@@ -91,6 +130,7 @@
         color: black;
     }
     .note-item{
-        grid-column: 3;
+        background-color: blue;
+        color: black;
     }
 </style>
