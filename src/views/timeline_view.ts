@@ -1,8 +1,13 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian';
+import Timeline from '../components/Timeline.svelte'
+import { mount, unmount } from 'svelte';
 
 export const VIEW_TYPE_TIMELINE = 'timeline-view';
 
 export class TimelineView extends ItemView {
+  // A variable to hold on to the Counter instance mounted in this ItemView.
+  counter: ReturnType<typeof Timeline> | undefined;
+
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
   }
@@ -16,13 +21,22 @@ export class TimelineView extends ItemView {
   }
 
   async onOpen() {
-    const timelineContainer = this.contentEl;
-    timelineContainer.empty();
-    timelineContainer.createEl('h4', { text: 'Timeline view', cls: 'timelineContainer' });
-    const timeline = timelineContainer.createDiv({ text: 'timelineContainer', cls: 'timeline' });
+    // Attach the Svelte component to the ItemViews content element and provide the needed props.
+    this.counter = mount(Timeline, {
+      target: this.contentEl,
+      props: {
+        
+      }
+    });
+
+    // Since the component instance is typed, the exported `increment` method is known to TypeScript.
+    //this.counter.increment();
   }
 
   async onClose() {
-    // Nothing to clean up.
+    if (this.counter) {
+      // Remove the Counter from the ItemView.
+      unmount(this.counter);
+    }
   }
 }
