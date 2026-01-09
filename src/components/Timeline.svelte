@@ -1,4 +1,7 @@
 <script lang="ts">
+    //TODO: On mouse over, display tooltip with name of the note.
+    //TODO: (Optional): On click, open note.
+
     import { type NotesData } from "types/notesType";
 
     interface Props {
@@ -29,7 +32,6 @@
             {name:"December", days:31}
         ]
     }
-    let days = 365;
 
     const calculateMonthRowNumber = (monthNumber:number) => {
         let totalDays = 0;
@@ -48,23 +50,24 @@
         rowStart: number;
         rowEnd: number;
     }
+
+    const getDayOfYear = (date: Date): number => {
+        const monthIndex = date.getMonth(); // 0-based
+        const dayOfMonth = date.getDate();  // 1-based
+
+        let daysBeforeMonth = 0;
+        for (let i = 0; i < monthIndex; i++) {
+            const month = year.months[i];
+            if( month == undefined || month == null){
+                break;
+            }
+            daysBeforeMonth += month.days;
+        }
+        return daysBeforeMonth + dayOfMonth;
+    };
     
     const getNodeRowAndColumn = (startDate: Date, endDate: Date): NodePosition => {
-        const getDayOfYear = (date: Date): number => {
-            const monthIndex = date.getMonth(); // 0-based
-            const dayOfMonth = date.getDate();  // 1-based
-
-            let daysBeforeMonth = 0;
-            for (let i = 0; i < monthIndex; i++) {
-                const month = year.months[i];
-                if( month == undefined || month == null){
-                    break;
-                }
-                daysBeforeMonth += month.days;
-            }
-
-            return daysBeforeMonth + dayOfMonth;
-        };
+        
 
         const rowStart = getDayOfYear(startDate);
         const rowEnd = getDayOfYear(endDate);
@@ -83,54 +86,72 @@
     );
 </script>
 
-<div class="days-group">
-    {#each year.months as month, index}
-    <div class="month-item" 
-        style:grid-row={`${calculateMonthRowNumber(index)} / span ${month.days}`}>
-        {month.name}
-    </div>
-    {/each}
+<div>
+    <div class="days-group">
+        <!-- Months -->
+        {#each year.months as month, index}
+        <div class="month-item" 
+            style:grid-row={`${calculateMonthRowNumber(index)} / span ${month.days}`}>
+            {month.name}
+        </div>
+        {/each}
 
-    {#each {length: days}, day}
-    <div class="day-item" style:grid-row={day+1}>{day + 1}</div>
-    {/each}
+        <!-- Days -->
+        {#each year.months as month, monthIndex}
+            {#each {length: month.days}, day}
+            <div class="day-item" style:grid-row={calculateMonthRowNumber(monthIndex) + day}>{day + 1}</div>
+            {/each}
+        {/each}
 
-    {#each nodes as node}
-    <div class="note-item"
-        style:grid-column={node.column}
-        style:grid-row={`${node.rowStart} /  ${node.rowEnd + 1}`}>
-        {node.rowStart}, {node.rowEnd}, span: {node.rowEnd + 1 - node.rowStart}
+        <!-- Notes -->
+        {#each nodes as node}
+        <div class="note-item"
+            style:grid-column={node.column}
+            style:grid-row={`${node.rowStart} /  ${node.rowEnd + 1}`}>
+        </div>
+        {/each}
+        
     </div>
-    {/each}
-    
 </div>
+
 
 <style>
     .days-group{
+        width: max-content;
+        margin-left: auto;
+        margin-right: auto;
         display: grid;
         row-gap: 0.25rem;
         column-gap: 0.25rem;
-        grid-template-columns: 2rem 1fr 1fr;
+        grid-template-columns: 2rem 2rem 2rem;
+        --main-color: #2d2c32;
+        --light-color: #D3DAD9;
+        --secondary-color: #6c6c7a;
+        --accent-color: #234C6A;
     }
     .month-item{
         grid-column: 1;
-        background-color: aqua;
+        border-bottom: 1px solid var(--main-color);
+        border-top: 1px solid var(--main-color);
         text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: black;
+        color: var(--secondary-color);
         writing-mode: vertical-rl;
         text-orientation: sideways;
         transform: rotate(180deg);
     }
     .day-item{
         grid-column: 2;
-        background-color: bisque;
-        color: black;
+        background-color: var(--main-color);
+        color: var(--secondary-color);
+        text-align: center;
+        border-radius: 0.25rem;
     }
     .note-item{
-        background-color: blue;
-        color: black;
+        border-radius: 0.25rem;
+        background-color: var(--accent-color);
+        color: var(--light-color);
     }
 </style>
