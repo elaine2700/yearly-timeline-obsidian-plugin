@@ -15,6 +15,7 @@ export default class TimelinePlugin extends Plugin {
 
   async activateView() {
     const { workspace } = this.app;
+    const appVar = this.app;
 
     let leaf: WorkspaceLeaf | null = null;
     const leaves = workspace.getLeavesOfType(VIEW_TYPE_TIMELINE);
@@ -36,7 +37,7 @@ export default class TimelinePlugin extends Plugin {
   private registerTimelineView() {
     this.registerView(
       VIEW_TYPE_TIMELINE,
-      (leaf) => new TimelineView(leaf)
+      (leaf) => new TimelineView(leaf,this.app)
     );
   }
 }

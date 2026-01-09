@@ -1,6 +1,7 @@
-import { ItemView, WorkspaceLeaf } from 'obsidian';
+import { App, ItemView, Vault, WorkspaceLeaf } from 'obsidian';
 import Timeline from '../components/Timeline.svelte'
 import { mount, unmount } from 'svelte';
+import { getNotesData } from 'lib/fileService';
 
 export const VIEW_TYPE_TIMELINE = 'timeline-view';
 
@@ -8,7 +9,7 @@ export class TimelineView extends ItemView {
   // A variable to hold on to the Counter instance mounted in this ItemView.
   counter: ReturnType<typeof Timeline> | undefined;
 
-  constructor(leaf: WorkspaceLeaf) {
+  constructor(leaf: WorkspaceLeaf, app:App) {
     super(leaf);
   }
 
@@ -21,11 +22,12 @@ export class TimelineView extends ItemView {
   }
 
   async onOpen() {
+    const files = await getNotesData(this.app)
     // Attach the Svelte component to the ItemViews content element and provide the needed props.
     this.counter = mount(Timeline, {
       target: this.contentEl,
       props: {
-        
+        notes: files
       }
     });
 

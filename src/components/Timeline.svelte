@@ -1,19 +1,11 @@
 <script lang="ts">
-	// import { TFile } from "obsidian";
+    import { type NotesData } from "types/notesType";
 
-    // interface Props {
-    //     files: TFile[]
-    // }
+    interface Props {
+        notes: NotesData[];
+    }
+    let { notes }: Props = $props();
 
-//   let {
-//     startCount
-//   }: Props = $props();
-
-//   let count = $derived(startCount);
-
-//   export function increment() {
-//     count += 1;
-//   }
     interface Year {
         months: Month[];
     }
@@ -74,7 +66,9 @@
     <div class="day-item" style:grid-row={day+1}>{day + 1}</div>
     {/each}
 
-    <!-- Nodes that span columns and rows -->
+    {#each notes as note}
+    <div class="note-item">{note.name}</div>
+    {/each}
 </div>
 
 <style>
@@ -95,5 +89,8 @@
         grid-column: 2;
         background-color: bisque;
         color: black;
+    }
+    .note-item{
+        grid-column: 3;
     }
 </style>
