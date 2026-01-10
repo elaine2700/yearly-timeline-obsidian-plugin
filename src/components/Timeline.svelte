@@ -1,4 +1,9 @@
 <script lang="ts">
+	// TODO: Add documentation on usage with frontmatter
+	// TODO: Set year dynamically considering leap year
+	// TODO: Add year selector
+	// TODO: Publish
+	// TODO: (Optional) Select a folder to include only notes inside it
 	import { type NotesData } from "types/notesType";
 
 	interface Props {
@@ -109,7 +114,7 @@
 	let maxColumnUsed = $derived(timelineData.maxColumnUsed);
 </script>
 
-<div>
+<div class="timeline-container">
 	<div
 		class="days-group"
 		style:grid-template-columns={`2rem 2rem ${Array(maxColumnUsed - 2)
@@ -161,21 +166,19 @@
 		display: grid;
 		row-gap: 0.25rem;
 		column-gap: 0.25rem;
-		--main-color: #2d2c32;
-		--light-color: #d3dad9;
-		--secondary-color: #6c6c7a;
-		--accent-color: #234c6a;
-		--accent-hover-color: #1e3c55;
+		--main-color: var(--background-secondary-alt);
+		--accent-color: var(--interactive-accent);
+		--accent-hover-color: var(--interactive-accent-hover);
 	}
 	.month-item {
 		grid-column: 1;
-		border-bottom: 1px solid var(--main-color);
-		border-top: 1px solid var(--main-color);
+		border-bottom: 1px solid var(--text-faint);
+		border-top: 1px solid var(--text-faint);
 		text-align: center;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--secondary-color);
+		color: var(--text-faint);
 		writing-mode: vertical-rl;
 		text-orientation: sideways;
 		transform: rotate(180deg);
@@ -183,14 +186,14 @@
 	.day-item {
 		grid-column: 2;
 		background-color: var(--main-color);
-		color: var(--secondary-color);
+		color: var(--text-muted);
 		text-align: center;
 		border-radius: 0.25rem;
 	}
 	.note-item {
 		border-radius: 0.25rem;
 		background-color: var(--accent-color);
-		color: var(--light-color);
+		color: var(--text-muted);
 	}
 	.note-item:hover {
 		background-color: var(--accent-hover-color);
