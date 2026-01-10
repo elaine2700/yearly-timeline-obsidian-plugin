@@ -1,9 +1,7 @@
 <script lang="ts">
 	// TODO: Add documentation on usage with frontmatter
-	// TODO: Set year dynamically considering leap year
-	// TODO: Add year selector
+	// TODO: (Optional) On settings set a folder path, where only notes inside will be included
 	// TODO: Publish
-	// TODO: (Optional) Select a folder to include only notes inside it
 	import { type NotesData } from "types/notesType";
 
 	interface Props {
@@ -12,6 +10,13 @@
 	}
 	let { notes, onNoteClick }: Props = $props();
 
+	let currentYear = $state(new Date().getFullYear());
+
+	const availableYears = Array.from(
+		{ length: 11 },
+		(_, i) => currentYear - i,
+	);
+
 	interface Year {
 		months: Month[];
 	}
@@ -19,10 +24,15 @@
 		name: string;
 		days: number;
 	}
-	const year: Year = {
+
+	const isLeapYear = (year: number) => {
+		return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+	};
+
+	const year: Year = $derived({
 		months: [
 			{ name: "January", days: 31 },
-			{ name: "February", days: 28 },
+			{ name: "February", days: isLeapYear(currentYear) ? 29 : 28 },
 			{ name: "March", days: 31 },
 			{ name: "April", days: 30 },
 			{ name: "May", days: 31 },
@@ -34,7 +44,7 @@
 			{ name: "November", days: 30 },
 			{ name: "December", days: 31 },
 		],
-	};
+	});
 
 	const calculateMonthRowNumber = (monthNumber: number) => {
 		let totalDays = 0;
@@ -70,7 +80,11 @@
 	};
 
 	let timelineData = $derived.by(() => {
-		const sortedNotes = notes
+		const filteredNotes = notes.filter(
+			(note) => note.startDate.getFullYear() === currentYear,
+		);
+
+		const sortedNotes = filteredNotes
 			.map((note) => ({
 				...note,
 				rowStart: getDayOfYear(note.startDate),
@@ -115,6 +129,14 @@
 </script>
 
 <div class="timeline-container">
+	<div class="timeline-header">
+		<h1 class="year-title">Yearly View</h1>
+		<select class="year-selector" bind:value={currentYear}>
+			{#each availableYears as yearOption}
+				<option value={yearOption}>{yearOption}</option>
+			{/each}
+		</select>
+	</div>
 	<div
 		class="days-group"
 		style:grid-template-columns={`2rem 2rem ${Array(maxColumnUsed - 2)
@@ -136,6 +158,7 @@
 			{#each { length: month.days }, day}
 				<div
 					class="day-item"
+					class:accent={day === 0}
 					style:grid-row={calculateMonthRowNumber(monthIndex) + day}
 				>
 					{day + 1}
@@ -159,6 +182,29 @@
 </div>
 
 <style>
+	.timeline-header {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		padding: 0.5rem;
+	}
+	.year-title {
+		margin: 0;
+	}
+	.year-selector {
+		background-color: var(--background-secondary);
+		color: var(--text-normal);
+		border: 1px solid var(--background-modifier-border);
+		border-radius: 0.25rem;
+		padding: 0.25rem 0.5rem;
+		font-size: 1rem;
+		cursor: pointer;
+	}
+	.year-selector:focus {
+		outline: none;
+		border-color: var(--interactive-accent);
+	}
 	.days-group {
 		width: max-content;
 		margin-left: auto;
@@ -172,8 +218,8 @@
 	}
 	.month-item {
 		grid-column: 1;
-		border-bottom: 1px solid var(--text-faint);
-		border-top: 1px solid var(--text-faint);
+		/* border-left: 2px solid var(--text-faint); */
+		/* border-right: 1px solid var(--text-faint); */
 		text-align: center;
 		display: flex;
 		align-items: center;
@@ -190,6 +236,10 @@
 		text-align: center;
 		border-radius: 0.25rem;
 	}
+	.day-item.accent {
+		background-color: var(--text-selection);
+	}
+
 	.note-item {
 		border-radius: 0.25rem;
 		background-color: var(--accent-color);
