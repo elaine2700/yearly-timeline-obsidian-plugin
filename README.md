@@ -1,65 +1,55 @@
-# Obsidian Sample Plugin
+# Yearly Timeline
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+A visually intuitive vertical timeline plugin for Obsidian that allows you to track and visualize your notes across a yearly view.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Screenshots
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+<!-- Add your screenshots here -->
+<p align="center">
+  <img src="./doc/plugin_view.png" alt="Yearly Timeline View" width="600">
+</p>
 
-## First time developing plugins?
+<p align="center">
+  <img src="./doc/properties.png" alt="Properties Frontmatter" width="600">
+</p>
 
-Quick starting guide for new plugin devs:
-
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+<p align="center">
+  <img src="./doc/year_selector.png" alt="Year Selector" width="600">
+</p>
 
 ## How to use
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+1. Install the plugin and enable it in your Obsidian settings.
+2. Click on the **Activate view** icon in the left ribbon (looks like a Gantt chart) to open the timeline view.
+3. Use the year selector at the top to navigate between different years.
 
-## Manually installing the plugin
+## Frontmatter Configuration
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+To display a note on the timeline, you need to add specific fields to your note's frontmatter (YAML). The plugin automatically picks up any note that contains at least a `startDate`.
 
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
+### Required Date Format
+Dates MUST follow the `DD/MM/YYYY` format. (Day, Month, Year).
+
+### Fields
+- `startDate`: **(Required)** The start date of the event or note.
+- `endDate`: *(Optional)* The end date. If not provided, it defaults to the `startDate` (representing a single-day event).
+
+### Example
+
+```yaml
+---
+startDate: 10/01/2026
+endDate: 25/01/2026
+---
+```
+
+## Features
+
+- **Yearly Perspective**: See your entire year's activities at a glance in a vertical layout.
+- **Overlap Handling**: Automatically organizes overlapping notes into separate columns (supports up to 5 concurrent overlaps).
+- **Interactive Navigation**: Click on any block in the timeline to instantly open the associated note.
+- **Real-time Updates**: The view refreshes automatically whenever you update the frontmatter dates in your notes.
+- **Leap Year Support**: Full support for leap years and varying month lengths.
 
 ## Funding URL
 
@@ -85,6 +75,3 @@ If you have multiple URLs, you can also do:
 }
 ```
 
-## API Documentation
-
-See https://docs.obsidian.md

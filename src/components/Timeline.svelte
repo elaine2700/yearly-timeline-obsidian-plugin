@@ -1,5 +1,4 @@
 <script lang="ts">
-	// TODO: Add documentation on usage with frontmatter
 	// TODO: (Optional) On settings set a folder path, where only notes inside will be included
 	// TODO: Publish
 	import { type NotesData } from "types/notesType";
