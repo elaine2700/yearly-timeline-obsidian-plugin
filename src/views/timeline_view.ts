@@ -1,4 +1,4 @@
-import { App, ItemView, Vault, WorkspaceLeaf } from 'obsidian';
+import { App, ItemView, TFile, WorkspaceLeaf } from 'obsidian';
 import Timeline from '../components/Timeline.svelte'
 import { mount, unmount } from 'svelte';
 import { getNotesData } from 'lib/fileService';
@@ -9,7 +9,7 @@ export class TimelineView extends ItemView {
   // A variable to hold on to the Counter instance mounted in this ItemView.
   counter: ReturnType<typeof Timeline> | undefined;
 
-  constructor(leaf: WorkspaceLeaf, app:App) {
+  constructor(leaf: WorkspaceLeaf, app: App) {
     super(leaf);
   }
 
@@ -22,22 +22,40 @@ export class TimelineView extends ItemView {
   }
 
   async onOpen() {
-    const files = await getNotesData(this.app)
-    // Attach the Svelte component to the ItemViews content element and provide the needed props.
+    await this.renderTimeline();
+
+    this.registerEvent(
+      this.app.metadataCache.on('changed', () => {
+        this.renderTimeline();
+      })
+    );
+  }
+
+  async renderTimeline() {
+    const files = await getNotesData(this.app);
+
+    if (this.counter) {
+      unmount(this.counter);
+    }
+
+    this.contentEl.empty();
+
     this.counter = mount(Timeline, {
       target: this.contentEl,
       props: {
-        notes: files
+        notes: files,
+        onNoteClick: (path: string) => {
+          const file = this.app.vault.getAbstractFileByPath(path);
+          if (file instanceof TFile) {
+            this.app.workspace.getLeaf().openFile(file);
+          }
+        }
       }
     });
-
-    // Since the component instance is typed, the exported `increment` method is known to TypeScript.
-    //this.counter.increment();
   }
 
   async onClose() {
     if (this.counter) {
-      // Remove the Counter from the ItemView.
       unmount(this.counter);
     }
   }

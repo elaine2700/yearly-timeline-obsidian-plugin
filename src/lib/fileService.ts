@@ -1,9 +1,9 @@
 import { App, TFile, type FrontMatterCache } from "obsidian";
 import type { NotesData } from "types/notesType";
 
-async function getNotesData(app:App): Promise<NotesData[]>{
+async function getNotesData(app: App): Promise<NotesData[]> {
     const files = app.vault.getMarkdownFiles();
-    let validNotes:NotesData[] = [];
+    let validNotes: NotesData[] = [];
     for (const file of files) {
         const extractedNote = await getNoteData(app, file);
         const fm = extractedNote.frontmatter as FrontMatterCache | undefined;
@@ -15,7 +15,7 @@ async function getNotesData(app:App): Promise<NotesData[]>{
 
         let startDate: Date;
         let endDate: Date;
-        
+
         try {
             startDate = normalizeDate(fm.startDate);
             endDate = normalizeDate(fm.endDate ?? fm.startDate);
@@ -29,6 +29,7 @@ async function getNotesData(app:App): Promise<NotesData[]>{
 
         validNotes.push({
             name: extractedNote.basename,
+            path: extractedNote.path,
             startDate,
             endDate,
         });
@@ -37,22 +38,22 @@ async function getNotesData(app:App): Promise<NotesData[]>{
 }
 
 interface FileData {
-    path:string;
+    path: string;
     basename: string;
     frontmatter?: FrontMatterCache;
     content: string;
 }
 
-async function getNoteData(app:App, file: TFile): Promise<FileData> {
-  const content = await app.vault.read(file);
-  const cache = app.metadataCache.getFileCache(file);
+async function getNoteData(app: App, file: TFile): Promise<FileData> {
+    const content = await app.vault.read(file);
+    const cache = app.metadataCache.getFileCache(file);
 
-  return {
-    path: file.path,
-    basename: file.basename,
-    frontmatter: cache?.frontmatter ?? {},
-    content
-  };
+    return {
+        path: file.path,
+        basename: file.basename,
+        frontmatter: cache?.frontmatter ?? {},
+        content
+    };
 }
 
 const normalizeDate = (value: unknown): Date => {
