@@ -64,31 +64,58 @@
 		return daysBeforeMonth + dayOfMonth;
 	};
 
-	const getNodeRowAndColumn = (
-		startDate: Date,
-		endDate: Date,
-	): NodePosition => {
-		const rowStart = getDayOfYear(startDate);
-		const rowEnd = getDayOfYear(endDate);
+	let timelineData = $derived.by(() => {
+		const sortedNotes = notes
+			.map((note) => ({
+				...note,
+				rowStart: getDayOfYear(note.startDate),
+				rowEnd: getDayOfYear(note.endDate),
+			}))
+			.sort((a, b) => a.rowStart - b.rowStart);
 
-		return {
-			column: 3,
-			rowStart,
-			rowEnd,
+		const lastOccupiedRowPerColumn: { [key: number]: number } = {
+			3: 0,
+			4: 0,
+			5: 0,
+			6: 0,
+			7: 0,
 		};
-	};
 
-	let nodes = $derived(
-		notes.map((note) => ({
-			...getNodeRowAndColumn(note.startDate, note.endDate),
-			name: note.name,
-			path: note.path,
-		})),
-	);
+		let maxColumnUsed = 3;
+
+		const processedNodes = sortedNotes.map((note) => {
+			let assignedColumn = 3;
+			for (let col = 3; col <= 7; col++) {
+				const lastRow = lastOccupiedRowPerColumn[col] ?? 0;
+				if (note.rowStart > lastRow) {
+					assignedColumn = col;
+					break;
+				}
+				assignedColumn = col;
+			}
+			lastOccupiedRowPerColumn[assignedColumn] = note.rowEnd;
+			if (assignedColumn > maxColumnUsed) maxColumnUsed = assignedColumn;
+
+			return {
+				...note,
+				column: assignedColumn,
+			};
+		});
+
+		return { nodes: processedNodes, maxColumnUsed };
+	});
+
+	let nodes = $derived(timelineData.nodes);
+	let maxColumnUsed = $derived(timelineData.maxColumnUsed);
 </script>
 
 <div>
-	<div class="days-group">
+	<div
+		class="days-group"
+		style:grid-template-columns={`2rem 2rem ${Array(maxColumnUsed - 2)
+			.fill("2rem")
+			.join(" ")}`}
+	>
 		<!-- Months -->
 		{#each year.months as month, index}
 			<div
@@ -134,7 +161,6 @@
 		display: grid;
 		row-gap: 0.25rem;
 		column-gap: 0.25rem;
-		grid-template-columns: 2rem 2rem 2rem;
 		--main-color: #2d2c32;
 		--light-color: #d3dad9;
 		--secondary-color: #6c6c7a;
