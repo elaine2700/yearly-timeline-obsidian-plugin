@@ -3,7 +3,7 @@
 	"name": "Yearly Timeline",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Visualize your notes across a yearly view",
+	"description": "Visualize your notes across a yearly view.",
 	"author": "Elaine Serrano",
 	"authorUrl": "https://www.elaineserrano.com",
 	"isDesktopOnly": false
