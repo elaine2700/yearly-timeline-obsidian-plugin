@@ -1,27 +1,27 @@
-import { Plugin, WorkspaceLeaf } from 'obsidian';
+import { Plugin, type WorkspaceLeaf } from 'obsidian';
 import { TimelineView, VIEW_TYPE_TIMELINE } from './views/timeline_view';
-import { DEFAULT_SETTINGS, SampleSettingTab } from './settings';
-import type { MyPluginSettings } from './settings';
+import { DEFAULT_SETTINGS, TimelineSettingTab } from './settings';
+import type { TimelineSettings } from './settings';
 
 export default class TimelinePlugin extends Plugin {
-  settings: MyPluginSettings;
+  settings: TimelineSettings;
 
   async onload() {
     await this.loadSettings();
     this.registerTimelineView();
 
     this.addRibbonIcon('square-chart-gantt', 'Activate view', () => {
-      this.activateView();
+      void this.activateView();
     });
 
-    this.addSettingTab(new SampleSettingTab(this.app, this));
+    this.addSettingTab(new TimelineSettingTab(this.app, this));
   }
 
-  async onunload() {
+  onunload() {
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<TimelineSettings>);
   }
 
   async saveSettings() {
@@ -49,7 +49,7 @@ export default class TimelinePlugin extends Plugin {
 
     // "Reveal" the leaf in case it is in a collapsed sidebar
     if (leaf) {
-      workspace.revealLeaf(leaf);
+      void workspace.revealLeaf(leaf);
     }
   }
 

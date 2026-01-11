@@ -26,7 +26,7 @@ export class TimelineView extends ItemView {
 
     this.registerEvent(
       this.app.metadataCache.on('changed', () => {
-        this.renderTimeline();
+        void this.renderTimeline();
       })
     );
   }
@@ -35,7 +35,7 @@ export class TimelineView extends ItemView {
     const files = await getNotesData(this.app);
 
     if (this.counter) {
-      unmount(this.counter);
+      await unmount(this.counter);
     }
 
     this.contentEl.empty();
@@ -47,7 +47,7 @@ export class TimelineView extends ItemView {
         onNoteClick: (path: string) => {
           const file = this.app.vault.getAbstractFileByPath(path);
           if (file instanceof TFile) {
-            this.app.workspace.getLeaf().openFile(file);
+            void this.app.workspace.getLeaf().openFile(file);
           }
         }
       }
@@ -56,7 +56,7 @@ export class TimelineView extends ItemView {
 
   async onClose() {
     if (this.counter) {
-      unmount(this.counter);
+      await unmount(this.counter);
     }
   }
 }

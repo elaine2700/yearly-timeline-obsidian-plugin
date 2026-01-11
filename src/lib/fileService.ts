@@ -6,7 +6,7 @@ async function getNotesData(app: App): Promise<NotesData[]> {
     let validNotes: NotesData[] = [];
     for (const file of files) {
         const extractedNote = await getNoteData(app, file);
-        const fm = extractedNote.frontmatter as FrontMatterCache | undefined;
+        const fm = extractedNote.frontmatter;
 
         // Must have frontmatter and startDate
         if (!fm || !fm.startDate) {
