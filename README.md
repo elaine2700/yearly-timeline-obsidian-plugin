@@ -51,27 +51,4 @@ endDate: 25/01/2026
 - **Real-time Updates**: The view refreshes automatically whenever you update the frontmatter dates in your notes.
 - **Leap Year Support**: Full support for leap years and varying month lengths.
 
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
 
