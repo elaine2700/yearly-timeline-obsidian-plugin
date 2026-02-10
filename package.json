@@ -1,6 +1,6 @@
 {
 	"name": "yearly-timeline-obsidian-plugin",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Plugin for Obsidian to create a yearly timeline",
 	"main": "main.js",
 	"type": "module",

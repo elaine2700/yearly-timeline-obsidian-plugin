@@ -27,7 +27,7 @@ Dates MUST follow the `DD/MM/YYYY` format. (Day, Month, Year).
 - `endDate`: *(Optional)* The end date.
     - If provided: The note is marked as **Done** (100% saturation).
     - If not provided: The note is marked as **In-Progress** (50% saturation) and automatically extends to today's date.
-- `category`: *(Optional)* Categorizes the note for color-coding. Supported: `work`, `personal`, `health`, `finance`, `education`, `hobbies`. (etc.)
+- `category`: *(Optional)* Categorizes the note for color-coding. The plugin automatically assigns one of 12 vibrant colors to any new category it discovers.
 
 ## Status & Appearance
 
@@ -44,7 +44,7 @@ The plugin automatically determines the status and visual style of a note based 
 </p>
 
 ### Category Colors
-Notes are colored based on their `category`. A legend button in the top-left of the timeline view shows the current mapping. If no category is provided, the default theme accent color is used.
+Notes are colored based on their `category`. The plugin uses a dynamic 12-color palette, assigning colors in the order categories are discovered (chronologically by note date). A legend button in the top-left of the timeline view shows the current mapping. If no category is provided, the default theme accent color is used.
 
 <p align="center">
   <img src="./doc/categories_panel.png" alt="Legend" width="600">
@@ -64,7 +64,7 @@ category: work
 ## Features
 
 - **Yearly Perspective**: See your entire year's activities at a glance in a vertical layout.
-- **Category Color Coding**: Assign colors to notes using categories (Work, Personal, Health, etc.).
+- **Category Color Coding**: Automatically assigns one of 12 vibrant colors to categories discovered in your notes.
 - **Progress Visualization**: Automatically distinguishes between "In-Progress" and "Completed" notes using saturation levels.
 - **Dynamic Legend**: Access a quick legend in the top-left to see active categories and their colors.
 - **Overlap Handling**: Automatically organizes overlapping notes into separate columns.

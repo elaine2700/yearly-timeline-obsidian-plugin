@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-02-10
+
+### Changed
+- **Dynamic Category Colors**: Replaced the static category mapping with a dynamic 12-color palette.
+- **Discovery Order Assignment**: Colors are now assigned sequentially to categories as they are discovered (based on chronological note order).
+- **Improved Legend**: The legend now automatically updates to show all discovered categories in their assignment order.
+
 ## [1.1.0] - 2026-02-10
 
 ### Added

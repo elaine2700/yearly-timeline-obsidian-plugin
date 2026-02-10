@@ -127,30 +127,57 @@
 	let nodes = $derived(timelineData.nodes);
 	let maxColumnUsed = $derived(timelineData.maxColumnUsed);
 
-	// Category Color Mapping
-	const categoryColors: Record<string, string> = {
-		work: "#3b82f6", // blue
-		personal: "#10b981", // green
-		health: "#ef4444", // red
-		finance: "#f59e0b", // amber
-		education: "#8b5cf6", // violet
-		hobbies: "#ec4899", // pink
-		default: "var(--interactive-accent)",
-	};
+	// 12 Modern vibrant colors for categories
+	const palette = [
+		"#3b82f6", // Blue
+		"#10b981", // Green
+		"#ef4444", // Red
+		"#f59e0b", // Amber
+		"#8b5cf6", // Violet
+		"#ec4899", // Pink
+		"#06b6d4", // Cyan
+		"#f97316", // Orange
+		"#14b8a6", // Teal
+		"#6366f1", // Indigo
+		"#d946ef", // Fuchsia
+		"#84cc16", // Lime
+	];
+
+	// Map categories to colors in order of appearance
+	const categoryColorMap = $derived.by(() => {
+		const map: Record<string, string> = {
+			default: "var(--interactive-accent)",
+		};
+
+		// Sort all notes by start date to assign colors chronologically
+		const chronNotes = [...notes].sort(
+			(a, b) => a.startDate.getTime() - b.startDate.getTime(),
+		);
+
+		let nextColorIndex = 0;
+		chronNotes.forEach((note) => {
+			if (note.category) {
+				const normalized = note.category.toLowerCase();
+				if (!map[normalized]) {
+					map[normalized] = palette[nextColorIndex % palette.length]!;
+					nextColorIndex++;
+				}
+			}
+		});
+
+		return map;
+	});
 
 	const getCategoryColor = (category?: string) => {
-		if (!category) return categoryColors.default;
+		if (!category) return categoryColorMap.default;
 		const normalized = category.toLowerCase();
-		return categoryColors[normalized] ?? categoryColors.default;
+		return categoryColorMap[normalized] ?? categoryColorMap.default;
 	};
 
 	let showLegend = $state(false);
 	const activeCategories = $derived.by(() => {
-		const cats = new Set<string>();
-		notes.forEach((n) => {
-			if (n.category) cats.add(n.category.toLowerCase());
-		});
-		return Array.from(cats).sort();
+		// Return categories in the order they appear in the color map (discovery order)
+		return Object.keys(categoryColorMap).filter((cat) => cat !== "default");
 	});
 </script>
 
@@ -200,7 +227,7 @@
 						<div class="legend-item">
 							<span
 								class="color-dot"
-								style:background-color={categoryColors.default}
+								style:background-color={categoryColorMap.default}
 							></span>
 							<span class="category-name">Default</span>
 						</div>
