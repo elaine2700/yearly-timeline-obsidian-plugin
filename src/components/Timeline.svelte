@@ -117,6 +117,7 @@
 			return {
 				...note,
 				column: assignedColumn,
+				color: getCategoryColor(note.category),
 			};
 		});
 
@@ -125,10 +126,88 @@
 
 	let nodes = $derived(timelineData.nodes);
 	let maxColumnUsed = $derived(timelineData.maxColumnUsed);
+
+	// Category Color Mapping
+	const categoryColors: Record<string, string> = {
+		work: "#3b82f6", // blue
+		personal: "#10b981", // green
+		health: "#ef4444", // red
+		finance: "#f59e0b", // amber
+		education: "#8b5cf6", // violet
+		hobbies: "#ec4899", // pink
+		default: "var(--interactive-accent)",
+	};
+
+	const getCategoryColor = (category?: string) => {
+		if (!category) return categoryColors.default;
+		const normalized = category.toLowerCase();
+		return categoryColors[normalized] ?? categoryColors.default;
+	};
+
+	let showLegend = $state(false);
+	const activeCategories = $derived.by(() => {
+		const cats = new Set<string>();
+		notes.forEach((n) => {
+			if (n.category) cats.add(n.category.toLowerCase());
+		});
+		return Array.from(cats).sort();
+	});
 </script>
 
 <div class="timeline-container">
 	<div class="timeline-header">
+		<div class="header-left">
+			<button
+				class="legend-btn"
+				onclick={() => (showLegend = !showLegend)}
+				title="Categories Legend"
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					><rect x="3" y="3" width="7" height="7"></rect><rect
+						x="14"
+						y="3"
+						width="7"
+						height="7"
+					></rect><rect x="14" y="14" width="7" height="7"
+					></rect><rect x="3" y="14" width="7" height="7"></rect></svg
+				>
+			</button>
+			{#if showLegend}
+				<div class="legend-popover">
+					<h3>Categories</h3>
+					<div class="legend-items">
+						{#each activeCategories as cat}
+							<div class="legend-item">
+								<span
+									class="color-dot"
+									style:background-color={getCategoryColor(
+										cat,
+									)}
+								></span>
+								<span class="category-name">{cat}</span>
+							</div>
+						{:else}
+							<p>No categories found</p>
+						{/each}
+						<div class="legend-item">
+							<span
+								class="color-dot"
+								style:background-color={categoryColors.default}
+							></span>
+							<span class="category-name">Default</span>
+						</div>
+					</div>
+				</div>
+			{/if}
+		</div>
 		<h1 class="year-title">Yearly View</h1>
 		<select class="year-selector" bind:value={currentYear}>
 			{#each availableYears as yearOption}
@@ -173,7 +252,11 @@
 				class="note-item"
 				style:grid-column={node.column}
 				style:grid-row={`${node.rowStart} /  ${node.rowEnd + 1}`}
-				title={node.name}
+				style:background-color={node.color}
+				style:filter={node.status === "in-progress"
+					? "saturate(0.5)"
+					: "saturate(1)"}
+				title={`${node.name}${node.category ? ` (${node.category})` : ""}`}
 				onclick={() => onNoteClick?.(node.path)}
 			></div>
 		{/each}
@@ -243,9 +326,81 @@
 		border-radius: 0.25rem;
 		background-color: var(--accent-color);
 		color: var(--text-muted);
+		transition: transform 0.1s ease;
 	}
 	.note-item:hover {
-		background-color: var(--accent-hover-color);
+		filter: brightness(1.1);
+		transform: scaleX(1.1);
 		cursor: pointer;
+	}
+
+	.header-left {
+		position: absolute;
+		left: 1rem;
+		display: flex;
+		align-items: center;
+	}
+
+	.legend-btn {
+		background: none;
+		border: none;
+		color: var(--text-muted);
+		cursor: pointer;
+		padding: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+	}
+
+	.legend-btn:hover {
+		background-color: var(--background-modifier-hover);
+		color: var(--text-normal);
+	}
+
+	.legend-popover {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		background-color: var(--background-primary);
+		border: 1px solid var(--background-modifier-border);
+		border-radius: 8px;
+		padding: 0.75rem;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+		z-index: 100;
+		min-width: 150px;
+		margin-top: 0.5rem;
+	}
+
+	.legend-popover h3 {
+		margin: 0 0 0.5rem 0;
+		font-size: 0.9rem;
+		color: var(--text-faint);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.legend-items {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.legend-item {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.color-dot {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+	}
+
+	.category-name {
+		font-size: 0.85rem;
+		color: var(--text-normal);
+		text-transform: capitalize;
 	}
 </style>
