@@ -2,19 +2,8 @@
 
 A visually intuitive vertical timeline plugin for Obsidian that allows you to track and visualize your notes across a yearly view.
 
-## Screenshots
-
-<!-- Add your screenshots here -->
 <p align="center">
   <img src="./doc/plugin_view.png" alt="Yearly Timeline View" width="600">
-</p>
-
-<p align="center">
-  <img src="./doc/properties.png" alt="Properties Frontmatter" width="600">
-</p>
-
-<p align="center">
-  <img src="./doc/year_selector.png" alt="Year Selector" width="600">
 </p>
 
 ## How to use
@@ -32,7 +21,27 @@ Dates MUST follow the `DD/MM/YYYY` format. (Day, Month, Year).
 
 ### Fields
 - `startDate`: **(Required)** The start date of the event or note.
-- `endDate`: *(Optional)* The end date. If not provided, it defaults to the `startDate` (representing a single-day event).
+- `endDate`: *(Optional)* The end date.
+    - If provided: The note is marked as **Done** (100% saturation).
+    - If not provided: The note is marked as **In-Progress** (50% saturation) and automatically extends to today's date.
+- `category`: *(Optional)* Categorizes the note for color-coding. Supported: `work`, `personal`, `health`, `finance`, `education`, `hobbies`. (etc.)
+
+## Status & Appearance
+
+The plugin automatically determines the status and visual style of a note based on its properties:
+
+| Status | Frontmatter Requirement | Appearance |
+| :--- | :--- | :--- |
+| **Todo** | No `startDate` | Hidden from timeline |
+| **In-Progress** | `startDate` but no `endDate` | 50% Saturation, ends today |
+| **Done** | Both `startDate` and `endDate` | 100% Saturation |
+
+### Category Colors
+Notes are colored based on their `category`. A legend button in the top-left of the timeline view shows the current mapping. If no category is provided, the default theme accent color is used.
+
+<p align="center">
+  <img src="./doc/year_selector.png" alt="Year Selector" width="600">
+</p>
 
 ### Example
 
@@ -40,15 +49,20 @@ Dates MUST follow the `DD/MM/YYYY` format. (Day, Month, Year).
 ---
 startDate: 10/01/2026
 endDate: 25/01/2026
+category: work
 ---
 ```
+
 
 ## Features
 
 - **Yearly Perspective**: See your entire year's activities at a glance in a vertical layout.
-- **Overlap Handling**: Automatically organizes overlapping notes into separate columns (supports up to 5 concurrent overlaps).
+- **Category Color Coding**: Assign colors to notes using categories (Work, Personal, Health, etc.).
+- **Progress Visualization**: Automatically distinguishes between "In-Progress" and "Completed" notes using saturation levels.
+- **Dynamic Legend**: Access a quick legend in the top-left to see active categories and their colors.
+- **Overlap Handling**: Automatically organizes overlapping notes into separate columns.
 - **Interactive Navigation**: Click on any block in the timeline to instantly open the associated note.
-- **Real-time Updates**: The view refreshes automatically whenever you update the frontmatter dates in your notes.
 - **Leap Year Support**: Full support for leap years and varying month lengths.
+
 
 
