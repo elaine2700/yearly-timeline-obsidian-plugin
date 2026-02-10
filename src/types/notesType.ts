@@ -3,7 +3,8 @@ interface NotesData {
     path: string;
     startDate: Date,
     endDate: Date,
-    category?: string
+    category?: string,
+    status: 'todo' | 'in-progress' | 'done'
 }
 
 export { type NotesData };

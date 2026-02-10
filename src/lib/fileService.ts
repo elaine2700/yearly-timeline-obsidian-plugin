@@ -13,12 +13,24 @@ async function getNotesData(app: App): Promise<NotesData[]> {
             continue;
         }
 
+        // Rules to get status:
+        // no startDate -> todo (Skipped, since we only process notes with startDate at line 12)
+        // startDate, no endDate -> in-progress, display endDate as today
+        // startDate, endDate -> done
+
+        let status: "todo" | "in-progress" | "done" = "done";
         let startDate: Date;
         let endDate: Date;
 
         try {
             startDate = normalizeDate(fm.startDate);
-            endDate = normalizeDate(fm.endDate ?? fm.startDate);
+            if (!fm.endDate) {
+                status = "in-progress";
+                endDate = new Date();
+            } else {
+                status = "done";
+                endDate = normalizeDate(fm.endDate);
+            }
         } catch (err) {
             console.warn(
                 `[Timeline Plugin] Skipping note "${extractedNote.basename}":`,
@@ -32,7 +44,8 @@ async function getNotesData(app: App): Promise<NotesData[]> {
             path: extractedNote.path,
             startDate,
             endDate,
-            category: fm.category
+            category: fm.category,
+            status,
         });
     }
     return validNotes;

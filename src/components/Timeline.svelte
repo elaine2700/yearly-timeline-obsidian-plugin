@@ -253,6 +253,9 @@
 				style:grid-column={node.column}
 				style:grid-row={`${node.rowStart} /  ${node.rowEnd + 1}`}
 				style:background-color={node.color}
+				style:filter={node.status === "in-progress"
+					? "saturate(0.5)"
+					: "saturate(1)"}
 				title={`${node.name}${node.category ? ` (${node.category})` : ""}`}
 				onclick={() => onNoteClick?.(node.path)}
 			></div>
