@@ -24,9 +24,9 @@ export class TimelineSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Settings #1')
-			.setDesc('It\'s a secret')
+			.setDesc('Coming soon...')
 			.addText(text => text
-				.setPlaceholder('Enter your secret')
+				.setPlaceholder('Coming soon...')
 				.setValue(this.plugin.settings.mySetting)
 				.onChange(async (value) => {
 					this.plugin.settings.mySetting = value;
