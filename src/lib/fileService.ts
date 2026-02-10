@@ -44,7 +44,7 @@ async function getNotesData(app: App): Promise<NotesData[]> {
             path: extractedNote.path,
             startDate,
             endDate,
-            category: fm.category,
+            category: typeof fm.category === 'string' ? fm.category : undefined,
             status,
         });
     }
