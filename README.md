@@ -5,6 +5,9 @@ A visually intuitive vertical timeline plugin for Obsidian that allows you to tr
 <p align="center">
   <img src="./doc/plugin_view.png" alt="Yearly Timeline View" width="600">
 </p>
+<p align="center">
+  <img src="./doc/year_selector.png" alt="Year Selector" width="600">
+</p>
 
 ## How to use
 
@@ -36,11 +39,15 @@ The plugin automatically determines the status and visual style of a note based 
 | **In-Progress** | `startDate` but no `endDate` | 50% Saturation, ends today |
 | **Done** | Both `startDate` and `endDate` | 100% Saturation |
 
+<p align="center">
+  <img src="./doc/status_colors.png" alt="Legend" width="600">
+</p>
+
 ### Category Colors
 Notes are colored based on their `category`. A legend button in the top-left of the timeline view shows the current mapping. If no category is provided, the default theme accent color is used.
 
 <p align="center">
-  <img src="./doc/year_selector.png" alt="Year Selector" width="600">
+  <img src="./doc/categories_panel.png" alt="Legend" width="600">
 </p>
 
 ### Example
