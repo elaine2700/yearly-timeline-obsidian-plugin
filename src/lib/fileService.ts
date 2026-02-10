@@ -32,6 +32,7 @@ async function getNotesData(app: App): Promise<NotesData[]> {
             path: extractedNote.path,
             startDate,
             endDate,
+            category: fm.category
         });
     }
     return validNotes;
