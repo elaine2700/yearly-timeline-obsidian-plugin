@@ -27,6 +27,7 @@ Dates MUST follow the `DD/MM/YYYY` format. (Day, Month, Year).
 - `endDate`: *(Optional)* The end date.
     - If provided: The note is marked as **Done** (100% saturation).
     - If not provided: The note is marked as **In-Progress** (50% saturation) and automatically extends to today's date.
+- `name`: *(Optional)* The name of the event or note. If not provided, the plugin will use the file name.
 - `category`: *(Optional)* Categorizes the note for color-coding. The plugin automatically assigns one of 12 vibrant colors to any new category it discovers.
 
 ## Status & Appearance
