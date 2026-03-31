@@ -40,7 +40,7 @@ async function getNotesData(app: App): Promise<NotesData[]> {
         }
 
         validNotes.push({
-            name: extractedNote.basename,
+            name: (fm.name && typeof fm.name === 'string') ? fm.name : extractedNote.basename,
             path: extractedNote.path,
             startDate,
             endDate,
