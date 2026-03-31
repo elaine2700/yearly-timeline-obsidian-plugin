@@ -1,6 +1,4 @@
 <script lang="ts">
-	// TODO: (Optional) On settings set a folder path, where only notes inside will be included
-	// TODO: Publish
 	import { type NotesData } from "types/notesType";
 
 	interface Props {
@@ -56,12 +54,6 @@
 		}
 		return totalDays + 1;
 	};
-
-	interface NodePosition {
-		column: number;
-		rowStart: number;
-		rowEnd: number;
-	}
 
 	const getDayOfYear = (date: Date): number => {
 		const monthIndex = date.getMonth(); // 0-based

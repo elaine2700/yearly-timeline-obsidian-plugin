@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-03-31
+
+### Added
+- **Frontmatter Name Support**: Tooltip now displays the `name` from note frontmatter when present, otherwise falls back to the file name.
+
 ## [1.1.1] - 2026-02-10
 
 ### Changed
