@@ -1,7 +1,11 @@
 import { App, TFile, type FrontMatterCache } from "obsidian";
 import type { NotesData } from "types/notesType";
+import { DEFAULT_SETTINGS } from "../settings";
 
-async function getNotesData(app: App): Promise<NotesData[]> {
+async function getNotesData(
+    app: App,
+    dateFormat: string = DEFAULT_SETTINGS.dateFormat
+): Promise<NotesData[]> {
     const files = app.vault.getMarkdownFiles();
     let validNotes: NotesData[] = [];
     for (const file of files) {
@@ -23,13 +27,13 @@ async function getNotesData(app: App): Promise<NotesData[]> {
         let endDate: Date;
 
         try {
-            startDate = normalizeDate(fm.startDate);
+            startDate = normalizeDate(fm.startDate, dateFormat);
             if (!fm.endDate) {
                 status = "in-progress";
                 endDate = new Date();
             } else {
                 status = "done";
-                endDate = normalizeDate(fm.endDate);
+                endDate = normalizeDate(fm.endDate, dateFormat);
             }
         } catch (err) {
             console.warn(
@@ -70,7 +74,10 @@ async function getNoteData(app: App, file: TFile): Promise<FileData> {
     };
 }
 
-const normalizeDate = (value: unknown): Date => {
+const normalizeDate = (
+    value: unknown,
+    dateFormat: string = DEFAULT_SETTINGS.dateFormat
+): Date => {
     if (value instanceof Date) {
         return value;
     }
@@ -79,17 +86,32 @@ const normalizeDate = (value: unknown): Date => {
         throw new Error(`Invalid date type: ${typeof value}`);
     }
 
-    // Expected format: dd/MM/YYYY
-    const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if (!match) {
-        throw new Error(`Invalid date format: ${value}`);
+    const tokens: ("yyyy" | "mm" | "dd")[] = [];
+    const regexStr = dateFormat
+        .toLowerCase()
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+        .replace(/yyyy|mm|dd/g, (token) => {
+            tokens.push(token as "yyyy" | "mm" | "dd");
+            return token === "yyyy" ? "(\\d{4})" : "(\\d{2})";
+        });
+
+    const match = value.trim().match(new RegExp(`^${regexStr}$`));
+    if (!match || tokens.length !== 3) {
+        throw new Error(`Invalid date format: ${value} (expected ${dateFormat})`);
     }
 
-    const [, dd, mm, yyyy] = match;
+    const parts: Record<"yyyy" | "mm" | "dd", number> = {
+        yyyy: 0,
+        mm: 0,
+        dd: 0,
+    };
+    tokens.forEach((token, index) => {
+        parts[token] = Number(match[index + 1]);
+    });
 
-    const day = Number(dd);
-    const month = Number(mm) - 1; // JS Date months are 0-based
-    const year = Number(yyyy);
+    const day = parts.dd;
+    const month = parts.mm - 1; // JS Date months are 0-based
+    const year = parts.yyyy;
 
     const date = new Date(year, month, day);
 

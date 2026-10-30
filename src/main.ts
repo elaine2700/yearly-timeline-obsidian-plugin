@@ -57,7 +57,7 @@ export default class TimelinePlugin extends Plugin {
   private registerTimelineView() {
     this.registerView(
       VIEW_TYPE_TIMELINE,
-      (leaf) => new TimelineView(leaf, this.app)
+      (leaf) => new TimelineView(leaf, this.app, this.settings.dateFormat)
     );
   }
 }

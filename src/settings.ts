@@ -1,12 +1,16 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import MyPlugin from "./main";
 
+export const DATE_FORMAT = 'yyyy-mm-dd';
+
 export interface TimelineSettings {
 	mySetting: string;
+	dateFormat: string;
 }
 
 export const DEFAULT_SETTINGS: TimelineSettings = {
-	mySetting: 'default'
+	mySetting: 'default',
+	dateFormat: DATE_FORMAT
 }
 
 export class TimelineSettingTab extends PluginSettingTab {
